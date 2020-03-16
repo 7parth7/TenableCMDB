@@ -20,10 +20,12 @@ print (cipher_suite)
 
 
 USER = os.environ.get("TenableUser")
-PASS = os.environ.get("TenablePassword")
-encrypted = cipher_suite.encrypt(PASS.encode())
-print(encrypted)
+PASS = cipher_suite.encrypt(os.environ.get("TenablePassword").encode())
+#encrypted = cipher_suite.encrypt(PASS.encode())
+print(PASS)
 
+decrypted = cipher_suite.decrypt(PASS)
+print(decrypted.decode())
 # Login to Tenable.sc
 # sc = TenableSC('tenable.partners.org')
 # sc.login(USER , PASS)
