@@ -7,6 +7,8 @@ Created on Fri Mar 13 09:38:50 2020
  
 from tkinter import *
 from tenable.sc import TenableSC
+from cryptography.fernet import Fernet
+
  
 # creates the main window object, defines its name, and default size
 main = Tk()
@@ -32,18 +34,23 @@ def repopulate_defaults(event):
         password_box.insert(0, '     ')
  
 def login(*event):
- 
+    
+    #Generate the key
+    key = (Fernet.generate_key()).decode()
+    cipher_suite = Fernet(key)
+    #print(key)
     # Able to be called from a key binding or a button click because of the '*event'
     TheUsername = username_box.get()
-    ThePassword = password_box.get()
-    print ('Username: ' + TheUsername)
-    print ('Password: ' + ThePassword)
-    main.destroy()
-    tenablelol(TheUsername,ThePassword)
+    ThePassword = cipher_suite.encrypt(password_box.get().encode())
     
-def tenablelol(user1,pass1):
+    print ('Username: ' + TheUsername)
+    #print (b'Password: ' + ThePassword)
+    main.destroy()
+    tenablelol(TheUsername,ThePassword,cipher_suite)
+    
+def tenablelol(user1,pass1,ciph):
     sc = TenableSC('tenable.partners.org')
-    sc.login(user1 , pass1)
+    sc.login(user1 , (ciph.decrypt(pass1)).decode())
     
     for rule in sc.accept_risks.list():
         print(rule) 
